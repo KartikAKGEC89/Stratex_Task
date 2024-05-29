@@ -2,14 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import db from "./config/Database.js";
 import router from "./routes/index.js";
 dotenv.config();
 const app = express();
 import csvtojson from "csvtojson";
 import multer from "multer";
-import path from "path";
 import BookDetail from './models/CsvModel.js';
+import { verifyToken , authorizeSeller} from "./middleware/VerifyToken.js";
 
 
 const upload = multer({ dest: 'uploads/' });
@@ -20,7 +19,7 @@ app.use(express.json());
 app.use(router);
 
 
-app.post('/upload', upload.single('csvfile'), async (req, res) => {
+app.post('/upload', verifyToken, authorizeSeller,upload.single('csvfile'), async (req, res) => {
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
@@ -30,7 +29,6 @@ app.post('/upload', upload.single('csvfile'), async (req, res) => {
     try {
         const jsonArray = await csvtojson().fromFile(filePath);
 
-        // Map each row in the CSV file to a new instance of the BookDetail model
         await Promise.all(jsonArray.map(async (row, index) => {
             try {
                 await BookDetail.create({

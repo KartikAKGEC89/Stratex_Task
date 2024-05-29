@@ -10,3 +10,10 @@ export const verifyToken = (req, res, next) => {
         next();
     })
 }
+
+export const authorizeSeller = (req, res, next) => {
+    if (req.user.type !== 'seller') {
+        return res.status(403).json({ msg: 'Forbidden: Only sellers can upload files.' });
+    }
+    next();
+};
