@@ -30,3 +30,23 @@ export const getbook = async (req, res) => {
         res.status(401).json(error);
     }
 }
+
+export const deleteBook = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const record = await BookDetail.findByPk(id);
+
+        if (record) {
+            await record.destroy({
+              where: {
+                id: id
+              },
+            });
+            res.json("delete successfully");
+        } else {
+            res.json("no record for id");
+        }
+    } catch (error) {
+        res.json(error);
+    }
+}
