@@ -1,6 +1,6 @@
 import express from "express";
 import { getUsers, Register, Login, Logout } from "../controllers/Users.js";
-import { verifyToken } from "../middleware/VerifyToken.js";
+import { authorizeSeller, verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
 import { create, deleteBook, getbook, updatebook } from "../controllers/BookDeatils.js";
  
@@ -11,9 +11,9 @@ router.post('/users', Register);
 router.post('/login', Login);
 router.get('/token', refreshToken);
 router.delete('/logout', Logout);
-router.post('/create', create);
-router.get('/books/:id', getbook)
-router.delete('/books/:id', deleteBook);
-router.put('/update/:id', updatebook);
+router.post('/create', verifyToken, authorizeSeller, create);
+router.get('/books/:id',  verifyToken, authorizeSeller, getbook)
+router.delete('/books/:id',  verifyToken, authorizeSeller, deleteBook);
+router.put('/update/:id',  verifyToken, authorizeSeller, updatebook);
  
 export default router;
