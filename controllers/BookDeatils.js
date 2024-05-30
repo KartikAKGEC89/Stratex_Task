@@ -50,3 +50,28 @@ export const deleteBook = async (req, res) => {
         res.json(error);
     }
 }
+
+export const updatebook = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const record = await BookDetail.findByPk(id);
+
+        const { title, author, publishedDate, price } = req.body;
+
+        if (record) {
+            await BookDetail.update({
+                title: title,
+                author: author,
+                publishedDate: publishedDate,
+                price:price
+            }, {
+                where: {
+                    id: id
+                }
+            });
+            res.json("Update successfully");
+        }
+    } catch (error) {
+        res.json(error);
+    }
+}
